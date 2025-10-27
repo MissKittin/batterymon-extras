@@ -1,0 +1,8 @@
+# This file contains settings for Python programs
+# Rename this file to batterymon_extras_config.py and edit it
+
+BATTERYMON_DIR="/usr/local/share/batterymon" # if batterymon is installed in a different path than /usr/local/share/batterymon
+
+# logs2xlsx-wrapper.py
+XLSX_TEMPLATE="/home/pi/logs2xlsx.xlsx" # can be None
+XLSX_NO_CONVERT=["Balance"] # from the LOG_PARAMS array from the lib/batterymon_common.py file, can be None
