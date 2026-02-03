@@ -12,10 +12,14 @@ If the main program is not in `/usr/local/share/batterymon`,
 rename `batterymon_extras_config.py.example` to `batterymon_extras_config.py`  
 and edit it (do this if you want to change other settings).  
 You can do the same with `batterymon_extras_config.rc.example` - it contains settings for shell scripts.  
-You can link the scripts to the `/usr/local/bin` directory.  
-Alternatively, you can link only the `batterymon.sh` file to `/usr/local/bin/batterymon` - this will make all programs visible under one command.  
+You can link the `.py` scripts to the `/usr/local/bin` directory.  
+Alternatively, you can link only the `batterymon.sh` file to `/usr/local/bin/batterymon` - this will make all programs visible under one command. Run:
+```
+ln -s /usr/local/share/batterymon/batterymon.sh /usr/local/bin/batterymon
+```
 To install the necessary packages, use pip:
 ```
+cd /usr/local/share/batterymon
 pip install openpyxl -t .
 ```
 
@@ -26,4 +30,10 @@ pip install openpyxl -t .
 * `logs2xlsx-wrapper.py` - a wrapper for `logs2xlsx.py` with a defined data source and xlsx template
 * `press-gpio-button.py` - press the GPIO button from the terminal
 * `read-voltage.py` - read the last recorded values from the log
-* `verify-archive.py` - Check the integrity of archived logs
+* `verify-archive.py` - check the integrity of archived logs
+
+### Bash completion
+If you only linked the `batterymon.sh` script to `/usr/local/bin/batterymon`, you can add command autocompletion. Execute:
+```
+ln -s /usr/local/share/batterymon-extras/batterymon.completion /etc/bash_completion.d/batterymon
+```

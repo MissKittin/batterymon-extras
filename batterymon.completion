@@ -1,0 +1,24 @@
+_batterymon_completion()
+{
+	[ "${COMP_CWORD}" = '1' ] || return
+
+	local script_path=$(command -v batterymon)
+	[ -x "${script_path}" ] || return
+	script_path=$(readlink -f ${script_path})
+	script_path="${script_path%/*}"
+
+	local programs=()
+	local i
+	for i in "${script_path}"/*; do
+		[ "${i}" = "${script_path}/*" ] && break
+		i="${i##*/}"
+
+		[ "${i}" = 'batterymon_extras_config.py' ] && continue
+		[ "${i}" = 'logs2xlsx-wrapper.py' ] && continue
+		[ "${i##*.}" = 'py' ] && programs+=("${i%.*}")
+	done
+
+	COMPREPLY=($(compgen -W "${programs[*]}" -- "${COMP_WORDS[COMP_CWORD]}"))
+}
+
+complete -F '_batterymon_completion' 'batterymon'
