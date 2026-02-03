@@ -6,3 +6,9 @@ BATTERYMON_DIR="/usr/local/share/batterymon" # if batterymon is installed in a d
 # logs2xlsx-wrapper.py
 XLSX_TEMPLATE="/home/pi/logs2xlsx.xlsx" # can be None
 XLSX_NO_CONVERT=["Balance"] # from the LOG_PARAMS array from the lib/batterymon_common.py file, can be None
+
+# read-voltage.py
+VOLTAGE_LABEL="Voltage"
+CELLDIFF_LABEL="CellDiff"
+PERCENTCAPACITY_LABEL="PercentCapacity"
+CURRENT_LABEL="Current"

@@ -22,9 +22,19 @@ import os
 import json
 from collections import deque
 
+voltage_label="Voltage"
+celldiff_label="CellDiff"
+percentcapacity_label="PercentCapacity"
+current_label="Current"
+
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
     sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
+
+    voltage_label=batterymon_extras_config.VOLTAGE_LABEL
+    celldiff_label=batterymon_extras_config.CELLDIFF_LABEL
+    percentcapacity_label=batterymon_extras_config.PERCENTCAPACITY_LABEL
+    current_label=batterymon_extras_config.CURRENT_LABEL
 else:
     sys.path.append("/usr/local/share/batterymon")
 
@@ -32,22 +42,20 @@ from lib import batterymon_helpers
 
 batterymon_common=batterymon_helpers.common()
 
-logs=[]
 current_out=batterymon_common.CURRENT_OUT
 print_json=True if len(sys.argv) > 1 and sys.argv[1] == "--print-json" else False
-led_on=False
-led_b_on=False
+led_on=os.path.exists(batterymon_common.GPIO_LED_IND)
+led_b_on=os.path.exists(batterymon_common.GPIO_LED_B_IND)
 
 if os.path.exists(batterymon_common.LOCK_FILE):
     current_out=batterymon_common.BACKUP_OUT
 
-if not print_json and os.path.exists(batterymon_common.GPIO_LED_IND):
-    led_on=True
-    print("[LED] Archiving in progress...")
+if not print_json:
+    if led_on:
+        print("[LED] Archiving in progress...")
 
-if not print_json and os.path.exists(batterymon_common.GPIO_LED_B_IND):
-    led_b_on=True
-    print("[LED] ALARM!!!")
+    if led_b_on:
+        print("[LED] ALARM!!!")
 
 if not os.path.exists(current_out):
     if print_json:
@@ -58,21 +66,32 @@ if not os.path.exists(current_out):
     sys.exit(1)
 
 with open(current_out, "r") as f:
-    logs.extend(deque(f, maxlen=len(batterymon_common.DEVICES)))
+    logs=list(deque(f, maxlen=len(batterymon_common.DEVICES)))
+
+data_to_encode=[None]*len(batterymon_common.DEVICES)
 
 if print_json:
-    data_to_encode=[]
-
     for log in logs:
         log=batterymon_helpers.parse_log_line(log)
 
         if log[2] != "OK":
             continue
 
-        data_to_encode.append(log)
+        if log[3] not in batterymon_common.DEVICES:
+            continue
+
+        data_to_encode[batterymon_common.DEVICES.index(log[3])]=log
 
     print(json.dumps([[led_on, led_b_on], data_to_encode]))
+
     sys.exit(0)
+
+log_params_index={name: batterymon_common.LOG_PARAMS.index(name)+4 for name in (
+    voltage_label,
+    celldiff_label,
+    percentcapacity_label,
+    current_label
+)}
 
 for log in logs:
     log=batterymon_helpers.parse_log_line(log)
@@ -93,19 +112,24 @@ for log in logs:
         print(log[1]+" "+log[3]+": NOT OK")
         continue
 
-    try:
-        voltage=float(log[batterymon_common.LOG_PARAMS.index("Voltage")+4])
-        need_balance=""
-
-        if float(log[batterymon_common.LOG_PARAMS.index("CellDiff")+4]) >= 0.05:
-            need_balance=" [B]"
-
-        print(log[1]+" "+log[3]+": "
-        +   str(round(float(log[batterymon_common.LOG_PARAMS.index("PercentCapacity")+4]), 3))+"% "
-        +   str(round(voltage, 3))+"V "
-        +   str(round(float(log[batterymon_common.LOG_PARAMS.index("Current")+4])*voltage, 3))+"W"
-        +   need_balance
-        )
-    except (ValueError, IndexError):
-        print(log[1]+" "+log[3]+": float conversion error")
+    if log[3] not in batterymon_common.DEVICES:
         continue
+
+    index=batterymon_common.DEVICES.index(log[3])
+
+    try:
+        voltage=float(log[log_params_index[voltage_label]])
+        need_balance=" [B]" if float(log[log_params_index[celldiff_label]]) >= 0.05 else ""
+
+        data_to_encode[index]=log[1]+" "+log[3]+": " \
+        +   str(round(float(log[log_params_index[percentcapacity_label]]), 3))+"% " \
+        +   str(round(voltage, 3))+"V " \
+        +   str(round(float(log[log_params_index[current_label]])*voltage, 3))+"W" \
+        +   need_balance
+    except(ValueError, IndexError):
+        data_to_encode[index]=log[1]+" "+log[3]+": float conversion error"
+        continue
+
+for item in data_to_encode:
+    if item is not None:
+        print(item)
