@@ -8,6 +8,9 @@
 # eg:
 #  batterymon.sh logs2xlsx /path/to/arch-journal ./template.xlsx > ./output.xlsx
 
+export PYTHONPYCACHEPREFIX="/tmp/.batterymon-extras-pyc-$(id -un)"
+mkdir -p -m 700 "${PYTHONPYCACHEPREFIX}"
+
 batterymon_extras="$(readlink -f "${0}")"
 batterymon_extras="${batterymon_extras%/*}"
 program="${1}"

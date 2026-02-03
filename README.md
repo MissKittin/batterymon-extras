@@ -23,7 +23,7 @@ pip install openpyxl -t .
 * `batterymon.sh` - a bridge that hides multiple programs under one command
 * `combine-logs.py` - combine multiple logs into one
 * `logs2xlsx.py` - insert archived data into a spreadsheet
-* `logs2xlsx-wrapper.py` - a wrapper for `logs2ram.py` with a defined data source and xlsx template
+* `logs2xlsx-wrapper.py` - a wrapper for `logs2xlsx.py` with a defined data source and xlsx template
 * `press-gpio-button.py` - press the GPIO button from the terminal
 * `read-voltage.py` - read the last recorded values from the log
 * `verify-archive.py` - Check the integrity of archived logs
