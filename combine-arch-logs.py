@@ -9,11 +9,11 @@ import sys
 
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
-    sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
+    sys.path.insert(1, batterymon_extras_config.BATTERYMON_DIR)
 else:
-    sys.path.append("/usr/local/share/batterymon")
+    sys.path.insert(1, "/usr/local/share/batterymon")
 
-from lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers
 
 if len(sys.argv) != 3:
     print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal /media/batterymon/$(date '+%Y-%m-%d_%H-%M-%S').txt.gz")

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# A wrapper for logs2ram.py
+# A wrapper for logs2xlsx.py
 # with a defined data source and xlsx template
 # You can link this file to /usr/local/bin/logs2xlsx.py
 
@@ -13,12 +13,12 @@ no_convert_indexes=[]
 
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
-    sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
+    sys.path.insert(1, batterymon_extras_config.BATTERYMON_DIR)
 
     xlsx_template=batterymon_extras_config.XLSX_TEMPLATE
     no_convert=batterymon_extras_config.XLSX_NO_CONVERT
 else:
-    sys.path.append("/usr/local/share/batterymon")
+    sys.path.insert(1, "/usr/local/share/batterymon")
 
 from lib import batterymon_common
 

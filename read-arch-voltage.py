@@ -51,7 +51,7 @@ def open_log_file(path):
 
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
-    sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
+    sys.path.insert(1, batterymon_extras_config.BATTERYMON_DIR)
 
     batterymon_extras_lib.read_voltage_labels={
         "voltage": batterymon_extras_config.VOLTAGE_LABEL,
@@ -60,7 +60,7 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
         "current": batterymon_extras_config.CURRENT_LABEL
     }
 else:
-    sys.path.append("/usr/local/share/batterymon")
+    sys.path.insert(1, "/usr/local/share/batterymon")
 
 from lib import batterymon_helpers
 
