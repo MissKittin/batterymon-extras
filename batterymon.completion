@@ -17,6 +17,8 @@ _batterymon_completion()
 		i="${i##*/}"
 
 		[ "${i}" = 'batterymon_extras_config.py' ] && continue
+		[ "${i}" = 'batterymon_extras_lib.py' ] && continue
+
 		[ "${i}" = 'logs2xlsx-wrapper.py' ] && continue
 		[ "${i}" = 'verify-arch-wrapper.py' ] && continue
 

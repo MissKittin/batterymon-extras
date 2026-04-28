@@ -21,20 +21,18 @@ import sys
 import os
 import json
 from collections import deque
-
-voltage_label="Voltage"
-celldiff_label="CellDiff"
-percentcapacity_label="PercentCapacity"
-current_label="Current"
+import batterymon_extras_lib
 
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
     sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
 
-    voltage_label=batterymon_extras_config.VOLTAGE_LABEL
-    celldiff_label=batterymon_extras_config.CELLDIFF_LABEL
-    percentcapacity_label=batterymon_extras_config.PERCENTCAPACITY_LABEL
-    current_label=batterymon_extras_config.CURRENT_LABEL
+    batterymon_extras_lib.read_voltage_labels={
+        "voltage": batterymon_extras_config.VOLTAGE_LABEL,
+        "celldiff": batterymon_extras_config.CELLDIFF_LABEL,
+        "percentcapacity": batterymon_extras_config.PERCENTCAPACITY_LABEL,
+        "current": batterymon_extras_config.CURRENT_LABEL
+    }
 else:
     sys.path.append("/usr/local/share/batterymon")
 
@@ -87,12 +85,9 @@ if print_json:
 
     sys.exit(0)
 
-log_params_index={name: batterymon_common.LOG_PARAMS.index(name)+4 for name in (
-    voltage_label,
-    celldiff_label,
-    percentcapacity_label,
-    current_label
-)}
+batterymon_extras_lib.read_voltage_log_params_index(
+    batterymon_common.LOG_PARAMS
+)
 
 for log in logs:
     log=batterymon_helpers.parse_log_line(log)
@@ -100,33 +95,9 @@ for log in logs:
     if log[3] not in batterymon_common.DEVICES:
         continue
 
-    index=batterymon_common.DEVICES.index(log[3])
-
-    if log[2] == "EX":
-        data_to_encode[index]=log[1]+" "+log[3]+": Exception"
-        continue
-
-    if log[2] == "RL":
-        data_to_encode[index]=log[1]+": Reading locked"
-        continue
-
-    if log[2] != "OK":
-        data_to_encode[index]=log[1]+" "+log[3]+": NOT OK"
-        continue
-
-    try:
-        voltage=float(log[log_params_index[voltage_label]])
-        need_balance=" [B]" if float(log[log_params_index[celldiff_label]]) >= 0.05 else ""
-
-        data_to_encode[index]=log[1]+" "+log[3]+": " \
-        +   str(round(float(log[log_params_index[percentcapacity_label]]), 3))+"% " \
-        +   str(round(voltage, 3))+"V " \
-        +   str(round(float(log[log_params_index[current_label]])*voltage, 3))+"W" \
-        +   need_balance
-    except(ValueError):
-        data_to_encode[index]=log[1]+" "+log[3]+": float conversion error"
-    except(IndexError):
-        data_to_encode[index]=log[1]+" "+log[3]+": index error"
+    data_to_encode[batterymon_common.DEVICES.index(log[3])]=batterymon_extras_lib.read_voltage_main(
+        log, "read-voltage"
+    )
 
 for item in data_to_encode:
     if item is not None:
