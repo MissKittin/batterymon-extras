@@ -39,13 +39,14 @@ else:
     sys.path.append("/usr/local/share/batterymon")
 
 from lib import batterymon_helpers
+from lib import batterymon_gpio_files
 
 batterymon_common=batterymon_helpers.common()
 
 current_out=batterymon_common.CURRENT_OUT
 print_json=True if len(sys.argv) > 1 and sys.argv[1] == "--print-json" else False
-led_on=os.path.exists(batterymon_common.GPIO_LED_IND)
-led_b_on=os.path.exists(batterymon_common.GPIO_LED_B_IND)
+led_on=batterymon_gpio_files.is_led_on()
+led_b_on=batterymon_gpio_files.is_led_b_on()
 
 if os.path.exists(batterymon_common.LOCK_FILE):
     current_out=batterymon_common.BACKUP_OUT

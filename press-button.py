@@ -8,15 +8,14 @@ import os
 
 if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_extras_config.py"):
     import batterymon_extras_config
-    sys.path.append(batterymon_extras_config.BATTERYMON_DIR)
+    sys.path.insert(1, batterymon_extras_config.BATTERYMON_DIR)
 else:
-    sys.path.append("/usr/local/share/batterymon")
+    sys.path.insert(1, "/usr/local/share/batterymon")
 
-from lib import batterymon_common
+from lib import batterymon_gpio_files
 
-if os.path.exists(batterymon_common.GPIO_BUTT_SW):
+if batterymon_gpio_files.is_butt_pressed():
     print("The button is already pressed")
     sys.exit(1)
 
-open(batterymon_common.GPIO_BUTT_SW, "w").close()
-os.chmod(batterymon_common.GPIO_BUTT_SW, 0o666)
+batterymon_gpio_files.butt_press()
