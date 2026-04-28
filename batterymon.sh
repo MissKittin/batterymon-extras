@@ -29,6 +29,10 @@ if [ ! -e "${batterymon_extras}/${program}.py" ] || [ "${program}" = 'batterymon
 
 	for i in ${batterymon_extras}/*; do
 		[ "${i}" = "${batterymon_extras}/*" ] && echo " failed to list programs" && break
+
+		[ -L "${i}" ] && continue
+		[ -d "${i}" ] && continue
+
 		i="${i##*/}"
 
 		[ "${i}" = 'batterymon_extras_config.py' ] && continue
