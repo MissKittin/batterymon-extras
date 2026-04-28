@@ -28,7 +28,7 @@ def read_voltage_wrapper(status, full_log, prog, message):
     #  ok - normal reading
     #  nok - not ok
     #  rl - reading locked
-    #  err - read-voltage current_out does not exist/read-arch-voltage Exception message (full_log will be None)
+    #  err - read-voltage current_out does not exist/read-voltage no valid data/read-arch-voltage Exception message (full_log will be None)
     #  ex - Exception
     #  ve - ValueError
     #  ie - IndexError
