@@ -25,7 +25,7 @@ pip install openpyxl -t .
 
 ### Tools
 * `batterymon.sh` - a bridge that hides multiple programs under one command
-* `combine-logs.py` - combine multiple logs into one
+* `combine-arch-logs.py` - combine multiple logs into one
 * `logs2xlsx.py` - insert archived data into a spreadsheet
 * `logs2xlsx-wrapper.py` - a wrapper for `logs2xlsx.py` with a defined data source and xlsx template
 * `press-button.py` - press the GPIO button from the terminal

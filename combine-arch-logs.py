@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# Combine multiple logs into one
-# Usage: combine-logs.py /path/to/archive_dir /path/to/log.txt.gz
+# BatteryMon tool that allows you to
+# combine multiple logs into one
 
 import os
 import gzip
@@ -16,11 +16,11 @@ else:
 from lib import batterymon_helpers
 
 if len(sys.argv) != 3:
-    print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/archive /media/batterymon/output.txt.gz")
+    print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal /media/batterymon/$(date '+%Y-%m-%d_%H-%M-%S').txt.gz")
     sys.exit(1)
 
 if not os.path.isdir(sys.argv[1]):
-    print(sys.argv[2]+" does not exist")
+    print(sys.argv[1]+" does not exist")
     sys.exit(1)
 
 if os.path.exists(sys.argv[2]):
