@@ -29,6 +29,7 @@ pip install openpyxl -t .
 * `logs2xlsx.py` - insert archived data into a spreadsheet
 * `logs2xlsx-wrapper.py` - a wrapper for `logs2xlsx.py` with a defined data source and xlsx template
 * `press-button.py` - press the GPIO button from the terminal
+* `read-arch-voltage.py` - get data from archived logs in a simple form
 * `read-voltage.py` - read the last recorded values from the log
 * `verify-archive.py` - check the integrity of archived logs
 
