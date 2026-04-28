@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# BatteryMon add-on that that allows you
+# BatteryMon add-on that allows you
 # to quickly check the integrity of archived logs
 
 import sys
@@ -21,43 +21,45 @@ good_files=0
 corrupted_files=0
 
 if len(sys.argv) < 2:
-    print("Usage: "+sys.argv[0]+" /path/to/journal")
+    print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal [/media/batterymon-backup/batterymon/journal]")
     sys.exit(1)
 
-if not os.path.isdir(sys.argv[1]):
-    print("Error: "+sys.argv[1]+" is not a directory")
-    sys.exit(1)
+for arg in sys.argv[1:]:
+    if not os.path.isdir(arg):
+        print("Error: "+arg+" is not a directory")
+        sys.exit(1)
 
-print("Location: "+sys.argv[1]+"\n")
+for arg in sys.argv[1:]:
+    print("\nLocation: "+arg+"\n")
 
-for filename in os.listdir(sys.argv[1]):
-    if not filename.endswith(".gz"):
-        continue
+    for filename in os.listdir(arg):
+        if not filename.endswith(".gz"):
+            continue
 
-    scanned_files+=1
-    full_path=os.path.join(sys.argv[1], filename)
+        scanned_files+=1
+        full_path=os.path.join(arg, filename)
 
-    if not os.path.exists(full_path+".sha512"):
-        print(" [NO-SHA] "+filename)
-        no_checksum_files+=1
+        if not os.path.exists(full_path+".sha512"):
+            print(" [NO-SHA] "+filename)
+            no_checksum_files+=1
 
-        continue
+            continue
 
-    try:
-        with open(full_path+".sha512", "r") as f_sum:
-            if batterymon_helpers.sha512sum(full_path) == f_sum.read():
-                print(" [  OK  ] "+filename)
-                good_files+=1
+        try:
+            with open(full_path+".sha512", "r") as f_sum:
+                if batterymon_helpers.sha512sum(full_path) == f_sum.read():
+                    print(" [  OK  ] "+filename)
+                    good_files+=1
 
-                continue
-    except Exception as e:
-        print(" [ FAIL ] "+filename+": "+str(e))
-        not_scanned_files+=1
+                    continue
+        except(Exception) as e:
+            print(" [ FAIL ] "+filename+": "+str(e))
+            not_scanned_files+=1
 
-        continue
+            continue
 
-    print(" [ FAIL ] "+filename)
-    corrupted_files+=1
+        print(" [ FAIL ] "+filename)
+        corrupted_files+=1
 
 if scanned_files != 0:
     print("")
