@@ -31,7 +31,8 @@ pip install openpyxl -t .
 * `press-button.py` - press the GPIO button from the terminal
 * `read-arch-voltage.py` - get data from archived logs in a simple form
 * `read-voltage.py` - read the last recorded values from the log
-* `verify-archive.py` - check the integrity of archived logs
+* `verify-arch.py` - check the integrity of archived logs
+* `verify-arch-wrapper.py` - a wrapper for `verify-arch.py` which automatically recognizes log directories
 
 ### Bash completion
 If you only linked the `batterymon.sh` script to `/usr/local/bin/batterymon`, you can add command autocompletion. Execute:

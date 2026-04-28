@@ -2,3 +2,4 @@
 # Rename this file to batterymon_extras_config.rc and edit it
 
 USE_LOGS2XLSX_WRAPPER='false' # the command batterymon.sh logs2xlsx runs logs2xlsx-wrapper.py
+USE_VERIFY_ARCH_WRAPPER='false' # the command batterymon.sh verify-arch runs verify-arch-wrapper.py

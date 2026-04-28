@@ -18,6 +18,7 @@ program="${1}"
 [ ! "${program}" = '' ] && shift
 
 USE_LOGS2XLSX_WRAPPER='false'
+USE_VERIFY_ARCH_WRAPPER='false'
 
 [ -e "${batterymon_extras}/batterymon_extras_config.rc" ] && . "${batterymon_extras}/batterymon_extras_config.rc"
 
@@ -32,6 +33,8 @@ if [ ! -e "${batterymon_extras}/${program}.py" ] || [ "${program}" = 'batterymon
 
 		[ "${i}" = 'batterymon_extras_config.py' ] && continue
 		[ "${i}" = 'logs2xlsx-wrapper.py' ] && "${USE_LOGS2XLSX_WRAPPER}" && continue
+		[ "${i}" = 'verify-arch-wrapper.py' ] && "${USE_VERIFY_ARCH_WRAPPER}" && continue
+
 		[ "${i##*.}" = 'py' ] && echo " ${i%.*}"
 	done
 
@@ -40,5 +43,8 @@ fi
 
 [ "${program}" = "logs2xlsx" ] && "${USE_LOGS2XLSX_WRAPPER}" && \
 	exec "${batterymon_extras}/logs2xlsx-wrapper.py" $@
+
+[ "${program}" = "verify-arch" ] && "${USE_VERIFY_ARCH_WRAPPER}" && \
+	exec "${batterymon_extras}/verify-arch-wrapper.py" $@
 
 exec "${batterymon_extras}/${program}.py" $@
