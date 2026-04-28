@@ -12,7 +12,7 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
 
-from lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers
 
 scanned_files=0
 not_scanned_files=0

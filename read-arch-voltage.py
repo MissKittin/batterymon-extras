@@ -67,7 +67,7 @@ else:
     def output_wrapper(status, full_log, prog, message):
         return message
 
-from lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers
 
 if len(sys.argv) < 2:
     print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal/file1.txt.gz [/media/batterymon/batterymon/journal/file2.txt.gz] [/media/batterymon/batterymon/journal/file3.txt.gz]")

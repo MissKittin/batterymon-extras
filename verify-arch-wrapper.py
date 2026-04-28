@@ -13,7 +13,7 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
 
-from lib import batterymon_common
+from batterymon_lib import batterymon_common
 
 args=["NULL", batterymon_common.ARCH_JOURNAL_DIR]
 

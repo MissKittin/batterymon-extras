@@ -82,8 +82,8 @@ def get_context(path_insert_index=1):
     else:
         sys.path.insert(path_insert_index, "/usr/local/share/batterymon")
 
-    from lib import batterymon_helpers as helpers
-    from lib import batterymon_gpio_files as gpio
+    from batterymon_lib import batterymon_helpers as helpers
+    from batterymon_lib import batterymon_gpio_files as gpio
 
     common=helpers.common()
 
