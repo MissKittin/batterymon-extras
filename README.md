@@ -9,9 +9,32 @@ More information on how to use scripts can be found in their headers
 
 ### Setup
 If the main program is not in `/usr/local/share/batterymon`,  
-rename `batterymon_extras_config.py.example` to `batterymon_extras_config.py`  
+rename `batterymon_extras_config_example.py` to `batterymon_extras_config.py`  
 and edit it (do this if you want to change other settings).  
-You can do the same with `batterymon_extras_config.rc.example` - it contains settings for shell scripts.  
+You can do the same with `batterymon_extras_config_example.rc` - it contains settings for shell scripts.  
+Instead of copying and editing the mentioned files, you can patch them, entering only the options you want to change: create the files `batterymon_extras_config.py` and `batterymon_extras_config.rc` and enter the settings like this:  
+for `batterymon_extras_config.py`:
+```
+# import sample configuration
+from batterymon_extras_config_example import *
+
+# enter your own settings
+XLSX_TEMPLATE="/home/username/logs2xlsx.xlsx"
+VOLTAGE_LABEL="Volts"
+
+# overwrite function
+def read_voltage_wrapper(status, full_log, prog, message):
+    # do something with message
+	return message
+```
+for `batterymon_extras_config.rc`:
+```
+# import sample configuration
+. "${batterymon_extras}/batterymon_extras_config_example.rc"
+
+# enter your own settings
+USE_LOGS2XLSX_WRAPPER='true'
+```
 You can link the `.py` scripts to the `/usr/local/bin` directory.  
 Alternatively, you can link only the `batterymon.sh` file to `/usr/local/bin/batterymon` - this will make all programs visible under one command. Run:
 ```

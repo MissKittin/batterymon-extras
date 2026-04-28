@@ -22,7 +22,7 @@ USE_VERIFY_ARCH_WRAPPER='false'
 
 [ -e "${batterymon_extras}/batterymon_extras_config.rc" ] && . "${batterymon_extras}/batterymon_extras_config.rc"
 
-if [ ! -e "${batterymon_extras}/${program}.py" ] || [ "${program}" = 'batterymon_extras_config' ] || [ "${program}" = 'batterymon_extras_lib' ]; then
+if [ ! -e "${batterymon_extras}/${program}.py" ] || [ "${program}" = 'batterymon_extras_config' ] || [ "${program}" = 'batterymon_extras_config_example' ] || [ "${program}" = 'batterymon_extras_lib' ]; then
 	[ ! "${program}" = '' ] && echo "${program} is unknown"
 	[ ! "${program}" = '' ] && echo ''
 	echo 'Available programs:'
@@ -32,6 +32,7 @@ if [ ! -e "${batterymon_extras}/${program}.py" ] || [ "${program}" = 'batterymon
 		i="${i##*/}"
 
 		[ "${i}" = 'batterymon_extras_config.py' ] && continue
+		[ "${i}" = 'batterymon_extras_config_example.py' ] && continue
 		[ "${i}" = 'batterymon_extras_lib.py' ] && continue
 
 		[ "${i}" = 'logs2xlsx-wrapper.py' ] && "${USE_LOGS2XLSX_WRAPPER}" && continue

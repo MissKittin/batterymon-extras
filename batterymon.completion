@@ -14,9 +14,14 @@ _batterymon_completion()
 	local i
 	for i in "${script_path}"/*; do
 		[ "${i}" = "${script_path}/*" ] && break
+
+		[ -L "${i}" ] && continue
+		[ -d "${i}" ] && continue
+
 		i="${i##*/}"
 
 		[ "${i}" = 'batterymon_extras_config.py' ] && continue
+		[ "${i}" = 'batterymon_extras_config_example.py' ] && continue
 		[ "${i}" = 'batterymon_extras_lib.py' ] && continue
 
 		[ "${i}" = 'logs2xlsx-wrapper.py' ] && continue
