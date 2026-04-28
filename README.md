@@ -25,6 +25,7 @@ pip install openpyxl -t .
 
 ### Tools
 * `batterymon.sh` - a bridge that hides multiple programs under one command
+* `bms-read-lock.py` - stop reading data from BMS (use with caution!)
 * `combine-arch-logs.py` - combine multiple logs into one
 * `logs2xlsx.py` - insert archived data into a spreadsheet
 * `logs2xlsx-wrapper.py` - a wrapper for `logs2xlsx.py` with a defined data source and xlsx template
