@@ -12,7 +12,7 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
 
-from batterymon_lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers_extra
 
 scanned_files=0
 not_scanned_files=0
@@ -47,7 +47,7 @@ for arg in sys.argv[1:]:
 
         try:
             with open(full_path+".sha512", "r") as f_sum:
-                if batterymon_helpers.sha512sum(full_path) == f_sum.read():
+                if batterymon_helpers_extra.sha512sum(full_path) == f_sum.read():
                     print(" [  OK  ] "+filename)
                     good_files+=1
 

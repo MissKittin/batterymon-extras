@@ -68,15 +68,13 @@ else:
         return message
 
 from batterymon_lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers_extra
 
 if len(sys.argv) < 2:
     print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal/file1.txt.gz [/media/batterymon/batterymon/journal/file2.txt.gz] [/media/batterymon/batterymon/journal/file3.txt.gz]")
     sys.exit(1)
 
 batterymon_common=batterymon_helpers.common()
-batterymon_extras_lib.read_voltage_log_params_index(
-    batterymon_common.LOG_PARAMS
-)
 
 for arg in glob_path(sys.argv[1:]):
     try:
@@ -86,7 +84,10 @@ for arg in glob_path(sys.argv[1:]):
             for line in file:
                 try:
                     print(batterymon_extras_lib.read_voltage_main(
-                        batterymon_helpers.parse_log_line(line.decode("utf-8")),
+                        batterymon_helpers_extra.log_line_dict(
+                            batterymon_helpers.parse_log_line(line.decode("utf-8")),
+                            batterymon_common
+                        ),
                         output_wrapper, "read-arch-voltage"
                     ))
                 except(UnicodeDecodeError):

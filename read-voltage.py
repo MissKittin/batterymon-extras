@@ -10,10 +10,10 @@
 #  [
 #   [bool_archive_led, bool_alarm_led],
 #   [
-#    [log from first device],
-#    [log from second device],
+#    {log from first device},
+#    {log from second device},
 #     ... ... ...
-#    [log from last device]
+#    {log from last device}
 #   ]
 #  ]
 #
@@ -52,15 +52,6 @@ import json
 from collections import deque
 import batterymon_extras_lib
 
-def _get_current_out(context):
-    batterymon_common=context[2]
-    current_out=batterymon_common.CURRENT_OUT
-
-    if os.path.exists(batterymon_common.LOCK_FILE):
-        current_out=batterymon_common.BACKUP_OUT
-
-    return current_out
-
 def output_wrapper(status, full_log, prog, message):
     return message
 
@@ -83,12 +74,14 @@ def get_context(path_insert_index=1):
         sys.path.insert(path_insert_index, "/usr/local/share/batterymon")
 
     from batterymon_lib import batterymon_helpers as helpers
+    from batterymon_lib import batterymon_helpers_extra as helpers_extra
     from batterymon_lib import batterymon_gpio_files as gpio
 
     common=helpers.common()
 
     return [
         helpers,
+        helpers_extra,
         gpio,
         common,
         {name: i for i, name in enumerate(common.DEVICES)} # device_index
@@ -96,11 +89,14 @@ def get_context(path_insert_index=1):
 
 def get_voltage_data(context, as_json=True):
     batterymon_helpers=context[0]
-    batterymon_gpio_files=context[1]
-    batterymon_common=context[2]
-    device_index=context[3]
+    batterymon_helpers_extra=context[1]
+    batterymon_gpio_files=context[2]
+    batterymon_common=context[3]
+    device_index=context[4]
 
-    current_out=_get_current_out(context)
+    current_out=batterymon_helpers_extra.get_current_out_path(
+        batterymon_common
+    )
     led_on=batterymon_gpio_files.is_led_on()
     led_b_on=batterymon_gpio_files.is_led_b_on()
 
@@ -114,12 +110,15 @@ def get_voltage_data(context, as_json=True):
     data_to_encode=[None]*len(batterymon_common.DEVICES)
 
     for log in logs:
-        log=batterymon_helpers.parse_log_line(log)
+        log=batterymon_helpers_extra.log_line_dict(
+            batterymon_helpers.parse_log_line(log),
+            batterymon_common
+        )
 
-        if log[2] != "OK":
+        if log["_bm_status"] != "OK":
             continue
 
-        idx=device_index.get(log[3])
+        idx=device_index.get(log["_bm_device"])
 
         if idx is None:
             continue
@@ -131,8 +130,9 @@ def get_voltage_data(context, as_json=True):
     return json.dumps(result) if as_json else result
 
 def print_voltage_data(context, data):
-    batterymon_common=context[2]
-    device_index=context[3]
+    batterymon_helpers_extra=context[1]
+    batterymon_common=context[3]
+    device_index=context[4]
 
     if data[0][0]:
         print(output_wrapper(
@@ -147,7 +147,9 @@ def print_voltage_data(context, data):
         ))
 
     if not data[1]:
-        current_out=_get_current_out(context)
+        current_out=batterymon_helpers_extra.get_current_out_path(
+            batterymon_common
+        )
 
         if not os.path.exists(current_out):
             print(output_wrapper(
@@ -162,17 +164,13 @@ def print_voltage_data(context, data):
 
         return 1
 
-    batterymon_extras_lib.read_voltage_log_params_index(
-        batterymon_common.LOG_PARAMS
-    )
-
     data_to_encode=[None]*len(batterymon_common.DEVICES)
 
     for log in data[1]:
         if log is None:
             continue
 
-        idx=device_index.get(log[3])
+        idx=device_index.get(log["_bm_device"])
 
         if idx is None:
             continue

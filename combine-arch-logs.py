@@ -13,7 +13,7 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
 
-from batterymon_lib import batterymon_helpers
+from batterymon_lib import batterymon_helpers_extra
 
 if len(sys.argv) != 3:
     print("Usage: "+sys.argv[0]+" /media/batterymon/batterymon/journal /media/batterymon/$(date '+%Y-%m-%d_%H-%M-%S').txt.gz")
@@ -35,5 +35,6 @@ with gzip.open(sys.argv[2], "wb", compresslevel=9) as output_file:
             output_file.write(input_file.read())
 
 print("Calculating checksum...")
+
 with open(sys.argv[2]+".sha512", "w") as output_file_sum:
-    output_file_sum.write(batterymon_helpers.sha512sum(sys.argv[2]))
+    output_file_sum.write(batterymon_helpers_extra.sha512sum(sys.argv[2]))
