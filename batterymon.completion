@@ -1,10 +1,13 @@
 _batterymon_completion()
 {
-	[ "${COMP_CWORD}" = '1' ] || return
+	if [ ! "${COMP_CWORD}" = '1' ]; then
+		COMPREPLY=($(compgen -f -- "${COMP_WORDS[COMP_CWORD]}"))
+		return
+	fi
 
 	local script_path=$(command -v batterymon)
 	[ -x "${script_path}" ] || return
-	script_path=$(readlink -f ${script_path})
+	script_path=$(readlink -f "${script_path}")
 	script_path="${script_path%/*}"
 
 	local programs=()
