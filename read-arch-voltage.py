@@ -59,8 +59,13 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
         "percentcapacity": batterymon_extras_config.PERCENTCAPACITY_LABEL,
         "current": batterymon_extras_config.CURRENT_LABEL
     }
+    batterymon_extras_lib.read_voltage_battery_labels=batterymon_extras_config.BATTERY_LABELS
+    output_wrapper=batterymon_extras_config.read_voltage_wrapper
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
+
+    def output_wrapper(status, full_log, prog, message):
+        return message
 
 from lib import batterymon_helpers
 
@@ -82,11 +87,17 @@ for arg in glob_path(sys.argv[1:]):
                 try:
                     print(batterymon_extras_lib.read_voltage_main(
                         batterymon_helpers.parse_log_line(line.decode("utf-8")),
-                        "read-arch-voltage"
+                        output_wrapper, "read-arch-voltage"
                     ))
                 except(UnicodeDecodeError):
-                    print(arg+": line "+str(current_line)+": unicode decode error")
+                    print(output_wrapper(
+                        "ude", None, "read-arch-voltage",
+                        arg+": line "+str(current_line)+": unicode decode error"
+                    ))
 
                 current_line+=1
     except(Exception) as e:
-        print("[ERR] "+arg+": "+str(e))
+        print(output_wrapper(
+            "err", None, "read-arch-voltage",
+            "[ERR] "+arg+": "+str(e)
+        ))

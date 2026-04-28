@@ -8,20 +8,31 @@ def read_voltage_log_params_index(LOG_PARAMS):
         read_voltage_labels["current"]
     )}
 
-def read_voltage_main(log, prog):
+def read_voltage_main(log, wrapper_function, prog):
     date=""
 
     if prog == "read-arch-voltage":
         date=log[0]+" "
 
-    if log[2] == "EX":
-        return date+log[1]+" "+log[3]+": Exception"
-
     if log[2] == "RL":
-        return date+log[1]+": Reading locked"
+        return wrapper_function(
+            "rl", log, prog,
+            date+log[1]+": Reading locked"
+        )
+
+    battery_label=read_voltage_battery_labels.get(log[3], log[3])
+
+    if log[2] == "EX":
+        return wrapper_function(
+            "ex", log, prog,
+            date+log[1]+" "+battery_label+": Exception"
+        )
 
     if log[2] != "OK":
-        return date+log[1]+" "+log[3]+": NOT OK"
+        return wrapper_function(
+            "nok", log, prog,
+            date+log[1]+" "+battery_label+": NOT OK"
+        )
 
     try:
         voltage=float(log[_read_voltage_log_params_index[read_voltage_labels["voltage"]]])
@@ -30,15 +41,21 @@ def read_voltage_main(log, prog):
         if float(log[_read_voltage_log_params_index[read_voltage_labels["celldiff"]]]) >= 0.05:
             need_balance=" [B]"
 
-        return date+log[1]+" "+log[3]+": " \
+        return wrapper_function("ok", log, prog, date+log[1]+" "+battery_label+": " \
         +   str(round(float(log[_read_voltage_log_params_index[read_voltage_labels["percentcapacity"]]]), 3))+"% " \
         +   str(round(voltage, 3))+"V " \
         +   str(round(float(log[_read_voltage_log_params_index[read_voltage_labels["current"]]])*voltage, 3))+"W" \
-        +   need_balance
+        +   need_balance)
     except(ValueError):
-        return date+log[1]+" "+log[3]+": float conversion error"
+        return wrapper_function(
+            "ve", log, prog,
+            date+log[1]+" "+battery_label+": float conversion error"
+        )
     except(IndexError):
-        return date+log[1]+" "+log[3]+": index error"
+        return wrapper_function(
+            "ie", log, prog,
+            date+log[1]+" "+battery_label+": index error"
+        )
 
 _read_voltage_log_params_index={}
 read_voltage_labels={
@@ -47,3 +64,4 @@ read_voltage_labels={
     "percentcapacity": "PercentCapacity",
     "current": "Current"
 }
+read_voltage_battery_labels={}

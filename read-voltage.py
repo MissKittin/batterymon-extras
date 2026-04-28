@@ -33,8 +33,13 @@ if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+"/batterymon_ex
         "percentcapacity": batterymon_extras_config.PERCENTCAPACITY_LABEL,
         "current": batterymon_extras_config.CURRENT_LABEL
     }
+    batterymon_extras_lib.read_voltage_battery_labels=batterymon_extras_config.BATTERY_LABELS
+    output_wrapper=batterymon_extras_config.read_voltage_wrapper
 else:
     sys.path.insert(1, "/usr/local/share/batterymon")
+
+    def output_wrapper(status, full_log, prog, message):
+        return message
 
 from lib import batterymon_helpers
 from lib import batterymon_gpio_files
@@ -51,16 +56,25 @@ if os.path.exists(batterymon_common.LOCK_FILE):
 
 if not print_json:
     if led_on:
-        print("[LED] Archiving in progress...")
+        print(output_wrapper(
+            "led", None, "read-voltage",
+            "[LED] Archiving in progress..."
+        ))
 
     if led_b_on:
-        print("[LED] ALARM!!!")
+        print(output_wrapper(
+            "led_b", None, "read-voltage",
+            "[LED] ALARM!!!"
+        ))
 
 if not os.path.exists(current_out):
     if print_json:
         print(json.dumps([[led_on, led_b_on], []]), end="")
     else:
-        print("[ERR] "+current_out+" does not exist")
+        print(output_wrapper(
+            "err", None, "read-voltage",
+            "[ERR] "+current_out+" does not exist"
+        ))
 
     sys.exit(1)
 
@@ -96,7 +110,7 @@ for log in logs:
         continue
 
     data_to_encode[batterymon_common.DEVICES.index(log[3])]=batterymon_extras_lib.read_voltage_main(
-        log, "read-voltage"
+        log, output_wrapper, "read-voltage"
     )
 
 for item in data_to_encode:
