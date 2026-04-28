@@ -59,7 +59,7 @@ if not print_json:
 
 if not os.path.exists(current_out):
     if print_json:
-        print(json.dumps([[led_on, led_b_on], []]))
+        print(json.dumps([[led_on, led_b_on], []]), end="")
     else:
         print("[ERR] "+current_out+" does not exist")
 
@@ -82,7 +82,7 @@ if print_json:
 
         data_to_encode[batterymon_common.DEVICES.index(log[3])]=log
 
-    print(json.dumps([[led_on, led_b_on], data_to_encode]))
+    print(json.dumps([[led_on, led_b_on], data_to_encode]), end="")
 
     sys.exit(0)
 
@@ -96,26 +96,22 @@ log_params_index={name: batterymon_common.LOG_PARAMS.index(name)+4 for name in (
 for log in logs:
     log=batterymon_helpers.parse_log_line(log)
 
-    if log[2] == "VE":
-        print(log[1]+" "+log[3]+": ValueError")
-        continue
-
-    if log[2] == "EX":
-        print(log[1]+" "+log[3]+": Exception")
-        continue
-
-    if log[2] == "RL":
-        print(log[1]+": Reading locked")
-        continue
-
-    if log[2] != "OK":
-        print(log[1]+" "+log[3]+": NOT OK")
-        continue
-
     if log[3] not in batterymon_common.DEVICES:
         continue
 
     index=batterymon_common.DEVICES.index(log[3])
+
+    if log[2] == "EX":
+        data_to_encode[index]=log[1]+" "+log[3]+": Exception"
+        continue
+
+    if log[2] == "RL":
+        data_to_encode[index]=log[1]+": Reading locked"
+        continue
+
+    if log[2] != "OK":
+        data_to_encode[index]=log[1]+" "+log[3]+": NOT OK"
+        continue
 
     try:
         voltage=float(log[log_params_index[voltage_label]])
@@ -126,9 +122,10 @@ for log in logs:
         +   str(round(voltage, 3))+"V " \
         +   str(round(float(log[log_params_index[current_label]])*voltage, 3))+"W" \
         +   need_balance
-    except(ValueError, IndexError):
+    except(ValueError):
         data_to_encode[index]=log[1]+" "+log[3]+": float conversion error"
-        continue
+    except(IndexError):
+        data_to_encode[index]=log[1]+" "+log[3]+": index error"
 
 for item in data_to_encode:
     if item is not None:
